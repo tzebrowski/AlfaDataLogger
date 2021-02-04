@@ -4,10 +4,13 @@ import android.app.IntentService
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 private const val ACTION_START = "org.openobd2.core.logger.ui.action.START"
 private const val ACTION_STOP = "org.openobd2.core.logger.ui.action.STOP"
 
+@AndroidEntryPoint
 class DataLoggerService : IntentService("DataLoggerService") {
 
     override fun onHandleIntent(intent: Intent?) {
@@ -22,10 +25,10 @@ class DataLoggerService : IntentService("DataLoggerService") {
         }
     }
 
+    @Inject
+    lateinit var dataLogger: DataLogger
+
     companion object {
-        @JvmStatic
-        var dataLogger: DataLogger =
-            DataLogger()
 
         @JvmStatic
         fun startAction(context: Context) {

@@ -9,6 +9,7 @@ import androidx.preference.CheckBoxPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import dagger.hilt.android.AndroidEntryPoint
 import org.openobd2.core.logger.R
 import org.openobd2.core.logger.bl.GENERIC_MODE
 
@@ -21,7 +22,7 @@ const val NOTIFICATION_DASH_VIEW_HIDE = "preferences.view.dash.hide"
 const val NOTIFICATION_GAUGE_VIEW_SHOW = "preferences.view.gauge.show"
 const val NOTIFICATION_GAUGE_VIEW_HIDE = "preferences.view.gauge.hide"
 
-
+@AndroidEntryPoint
 class PreferencesFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {

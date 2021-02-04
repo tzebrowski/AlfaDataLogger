@@ -32,7 +32,6 @@ class DashViewAdapter internal constructor(
     var mData: MutableList<Metric<*>> = data
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
 
-
     fun swapItems(fromPosition: Int, toPosition: Int) {
         Collections.swap(mData,fromPosition,toPosition)
         notifyItemMoved(fromPosition, toPosition)
@@ -81,7 +80,6 @@ class DashViewAdapter internal constructor(
         holder.units.text = (obdCommand.pid).units
         holder.value.text = commandReply.valueAsString()
         holder.label.text = obdCommand.pid.description
-
     }
 
     override fun getItemCount(): Int {
@@ -117,8 +115,6 @@ class DashViewAdapter internal constructor(
                 chart.setDrawBorders(false)
                 chart.setAddStatesFromChildren(false)
 
-
-
                 chart.description.isEnabled = false
                 chart.setPinchZoom(false)
                 chart.setDrawGridBackground(false)
@@ -148,7 +144,6 @@ class DashViewAdapter internal constructor(
                 val rightAxis = chart.axisRight
                 rightAxis.setDrawGridLines(false)
 
-
                 val l = chart.legend
                 l.verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM
                 l.horizontalAlignment = Legend.LegendHorizontalAlignment.LEFT
@@ -157,7 +152,6 @@ class DashViewAdapter internal constructor(
                 l.form = Legend.LegendForm.SQUARE
 
                 val dataSets: ArrayList<IBarDataSet> = ArrayList()
-
 
                 this.segments.to().forEach { v: Double ->
                     val values: ArrayList<BarEntry> = ArrayList()

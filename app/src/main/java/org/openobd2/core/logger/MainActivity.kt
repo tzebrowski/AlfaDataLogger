@@ -23,10 +23,12 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.HiltAndroidApp
 import org.openobd2.core.logger.bl.*
 import org.openobd2.core.logger.ui.preferences.*
 
-
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private var broadcastReceiver = object : BroadcastReceiver() {
@@ -134,13 +136,12 @@ class MainActivity : AppCompatActivity() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
 
-        val layout: CoordinatorLayout = this.findViewById(R.id.coordinator_Layout)
-        layout.isVisible =  newConfig.orientation != Configuration.ORIENTATION_LANDSCAPE
+        val buttonBar: CoordinatorLayout = this.findViewById(R.id.coordinator_Layout)
+        buttonBar.isVisible =  newConfig.orientation != Configuration.ORIENTATION_LANDSCAPE
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        DataLoggerService.dataLogger.init(this.application)
 
         setContentView(R.layout.activity_main)
         setupNavigation()
@@ -150,7 +151,6 @@ class MainActivity : AppCompatActivity() {
 
         val progressBar: ProgressBar = findViewById(R.id.p_bar)
         progressBar.visibility = View.GONE
-
 
         val btnStart: FloatingActionButton = findViewById(R.id.action_btn)
         btnStart.setOnClickListener(View.OnClickListener {
@@ -233,7 +233,6 @@ class MainActivity : AppCompatActivity() {
             addAction(NOTIFICATION_GAUGE_VIEW_HIDE)
             addAction(NOTIFICATION_DASH_VIEW_SHOW)
             addAction(NOTIFICATION_DASH_VIEW_HIDE)
-
         })
     }
 }

@@ -11,13 +11,16 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import dagger.hilt.android.AndroidEntryPoint
 import org.obd.metrics.Metric
 import org.obd.metrics.command.obd.ObdCommand
 import org.openobd2.core.logger.R
+import org.openobd2.core.logger.bl.DataLogger
 import org.openobd2.core.logger.bl.DataLoggerService
 import org.openobd2.core.logger.bl.ModelChangePublisher
 import org.openobd2.core.logger.ui.preferences.DashItemPreferences
 import org.openobd2.core.logger.ui.preferences.Preferences
+import javax.inject.Inject
 
 
 internal class DragManageAdapter(ctx: Context,adapter: DashViewAdapter,dragDirs: Int, swipeDirs: Int) :
@@ -40,9 +43,11 @@ internal class DragManageAdapter(ctx: Context,adapter: DashViewAdapter,dragDirs:
 
 }
 
+@AndroidEntryPoint
 class DashFragment : Fragment() {
 
     lateinit var root: View
+    @Inject lateinit var dataLogger: DataLogger
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
@@ -50,6 +55,8 @@ class DashFragment : Fragment() {
             setupRecyclerView()
         }
     }
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -62,24 +69,23 @@ class DashFragment : Fragment() {
         return root
     }
 
+
     private fun setupRecyclerView() {
         val selectedPids = Preferences.getStringSet(requireContext(), "pref.dash.pids.selected")
-        val data = DataLoggerService.dataLogger.buildMetricsBy(selectedPids)
+        val data = this.dataLogger.buildMetricsBy(selectedPids)
 
-        val load = DashItemPreferences.load(requireContext())?.map {
-            it.query to it.position
-        }!!.toMap()
+        val dashItemPositionMap = DashItemPreferences.asPositionMap(requireContext())
 
-        val lengthComparator = Comparator { m1: Metric<*>, m2: Metric<*> ->
-            if (load.containsKey(m1.command.query)) {
-                load[m1.command.query]!!
-                    .compareTo(load[m2.command.query]!!)
+        val dashItemPositionComparator = Comparator { m1: Metric<*>, m2: Metric<*> ->
+            if (dashItemPositionMap.containsKey(m1.command.query)) {
+                dashItemPositionMap[m1.command.query]!!
+                    .compareTo(dashItemPositionMap[m2.command.query]!!)
             }else{
                 -1
             }
         }
 
-        data.sortWith(lengthComparator)
+        data.sortWith(dashItemPositionComparator)
 
         val adapter = DashViewAdapter(root.context, data)
         val recyclerView: RecyclerView = root.findViewById(R.id.recycler_view)

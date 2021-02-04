@@ -10,15 +10,20 @@ import androidx.recyclerview.widget.RecyclerView
 import org.obd.metrics.Metric
 import org.obd.metrics.command.obd.ObdCommand
 import org.openobd2.core.logger.R
-import org.openobd2.core.logger.bl.DataLoggerService
+import org.openobd2.core.logger.bl.DataLogger
+
 
 class GaugeViewAdapter internal constructor(
     context: Context?,
-    data: MutableCollection<Metric<*>>
+    data: MutableCollection<Metric<*>>,
+    dataLogger: DataLogger
 ) :
     RecyclerView.Adapter<GaugeViewAdapter.ViewHolder>() {
     var mData: MutableCollection<Metric<*>> = data
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
+
+
+    var dataLogger: DataLogger = dataLogger
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -41,7 +46,7 @@ class GaugeViewAdapter internal constructor(
         holder.maxTextView.text = ""
 
         val statistic =
-            DataLoggerService.dataLogger.statistics().findBy(metric.command)
+            dataLogger.statistics().findBy(metric.command)
         holder.minTextView.text = statistic.min.toString()
         holder.maxTextView.text = statistic.max.toString()
 

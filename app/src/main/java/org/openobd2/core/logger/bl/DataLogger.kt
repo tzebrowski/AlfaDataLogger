@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.preference.PreferenceManager
+import dagger.hilt.android.qualifiers.ApplicationContext
 import org.obd.metrics.Metric
 import org.obd.metrics.StatusObserver
 import org.obd.metrics.command.group.AlfaMed17CommandGroup
@@ -13,6 +14,8 @@ import org.obd.metrics.statistics.StatisticsAccumulator
 import org.obd.metrics.workflow.EcuSpecific
 import org.obd.metrics.workflow.Workflow
 import org.openobd2.core.logger.ui.preferences.Preferences
+import javax.inject.Inject
+import javax.inject.Singleton
 
 const val NOTIFICATION_CONNECTED = "data.logger.connected"
 const val NOTIFICATION_CONNECTING = "data.logger.connecting"
@@ -23,10 +26,12 @@ const val LOG_KEY = "DATA_LOGGER_DL"
 const val GENERIC_MODE = "Generic mode"
 
 
-class DataLogger {
+@Singleton
+class DataLogger @Inject constructor(@ApplicationContext ctx: Context){
+
+    private var context = ctx
 
     private var modelUpdate = ModelChangePublisher()
-    private lateinit var context: Context
     private var statusObserver = object : StatusObserver {
         override fun onConnecting() {
             Log.i(LOG_KEY, "Start collecting process for the Device: $device")
@@ -100,8 +105,7 @@ class DataLogger {
     }
 
     fun buildMetricsBy(pids: Set<String>): MutableList<Metric<*>> {
-        var pidRegistry: PidRegistry =
-            DataLoggerService.dataLogger.pids()
+        var pidRegistry: PidRegistry = pids()
         var data: MutableList<Metric<*>> = arrayListOf()
         pids.forEach { s: String? ->
             pidRegistry.findBy(s)?.apply {
